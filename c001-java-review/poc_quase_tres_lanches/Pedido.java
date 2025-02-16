@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Pedido {
 	private String nomeCliente;
 	private Double taxaServico = 0.1;
-	private ArrayList<Prato> itensConsumidos;
+	private ArrayList<Prato> itensConsumidos = new ArrayList<Prato>();
 	
 	public String getNomeCliente() { return nomeCliente; }
 	public void setNomeCliente(String nomeCliente) { this.nomeCliente = nomeCliente; }
@@ -42,10 +42,12 @@ public class Pedido {
         System.out.println("Cliente: " + nomeCliente);
         System.out.println("--------------------------------");
         
-        for (Prato prato : itensConsumidos) {
-        	String descricao = String.format("%s - %.2fkg, %s", prato.getClass().getSimpleName(), prato.getPeso(), prato.getDataValidade());
-        	Double preco = prato.getPreco();
-            System.out.printf("%s: R$ %.2f\n", descricao, preco);
+        if(!itensConsumidos.isEmpty()) {
+        	for (Prato prato : itensConsumidos) {
+            	String descricao = gerarDescricao(prato);
+            	Double preco = prato.getPreco();
+                System.out.printf("%s: R$ %.2f\n", descricao, preco);
+            }
         }
         
         System.out.println("--------------------------------");
@@ -62,5 +64,21 @@ public class Pedido {
             Double troco = dinheiroRecebido - total;
             System.out.printf("Troco: R$ %.2f\n", troco);
         }
+	}
+	
+	private String gerarDescricao(Prato prato) {
+		String descricao = String.format("%s - %.2fkg, %s", prato.getClass().getSimpleName(), prato.getPeso(), prato.getDataValidade());
+
+	    if (prato instanceof Pizza pizza) {
+	        descricao += String.format(" | Molho: %s, Recheio: %s, Borda: %s", pizza.getMolho(), pizza.getRecheio(), pizza.getBorda());
+	    } 
+	    else if (prato instanceof Salgado salgado) {
+	        descricao += String.format(" | Recheio: %s, Massa: %s, Tipo: %s", salgado.getRecheio(), salgado.getMassa(), salgado.getTipo());
+	    } 
+	    else if (prato instanceof Lanche lanche) {
+	        descricao += String.format(" | Pão: %s, Recheio: %s, Molho: %s", lanche.getPao(), lanche.getRecheio(), lanche.getMolho());
+	    }
+	    
+	    return descricao;
 	}
 }
