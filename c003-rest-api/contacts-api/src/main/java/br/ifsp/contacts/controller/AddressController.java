@@ -1,11 +1,14 @@
 package br.ifsp.contacts.controller;
 
+import br.ifsp.contacts.exception.ResourceNotFoundException;
 import br.ifsp.contacts.model.Address;
 import br.ifsp.contacts.repository.AddressRepository;
 import br.ifsp.contacts.repository.ContactRepository;
+import jakarta.validation.Valid;
 import br.ifsp.contacts.model.Contact;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,33 +37,25 @@ public class AddressController {
         return addressRepository.findAll();
     }
 
+    @GetMapping("/contacts/{contactId}")
+    public List<Address> getAddressesByContact(@PathVariable Long contactId) {
+        Contact contact = contactRepository.findById(contactId)
+                .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado: " + contactId));
+        
+        return contact.getAddresses();
+    }
+
     /**
      * Adiciona um novo endereço associado a um contato.
      */
-    @PostMapping
-    public ResponseEntity<Address> addAddress(@RequestBody Address address) {
-        // Verifica se o contato associado existe
-        Optional<Contact> contactOptional = contactRepository.findById(address.getContact().getId());
-        if (contactOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        // Obtém o contato associado
-        Contact contact = contactOptional.get();
-
-        // Adiciona o endereço ao contato, evitando duplicações
-        if (!contact.getAddresses().contains(address)) {
-            contact.getAddresses().add(address);
-        }
-
-        // Define o contato no endereço e salva
+    @PostMapping("/contacts/{contactId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Address createAddress(@PathVariable Long contactId, @RequestBody @Valid Address address) {
+        Contact contact = contactRepository.findById(contactId)
+                .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado: " + contactId));
+        
         address.setContact(contact);
-        Address savedAddress = addressRepository.save(address);
-
-        // Salva o contato atualizado
-        contactRepository.save(contact);
-
-        return ResponseEntity.ok(savedAddress);
+        return addressRepository.save(address);
     }
 
     /**
@@ -122,11 +117,19 @@ public class AddressController {
                     existingAddress.setCep((String) value);
                     break;
                 case "contact":
-                    Map<String, Object> contactMap = (Map<String, Object>) value;
-                    Long contactId = Long.valueOf(contactMap.get("id").toString());
-                    Contact contact = contactRepository.findById(contactId)
-                            .orElseThrow(() -> new RuntimeException("Contato não encontrado: " + contactId));
-                    existingAddress.setContact(contact);
+                    if (value instanceof Map<?, ?>) {
+                        Map<?, ?> contactMap = (Map<?, ?>) value;
+                        if (contactMap.containsKey("id")) {
+                            Long contactId = Long.valueOf(contactMap.get("id").toString());
+                            Contact contact = contactRepository.findById(contactId)
+                                    .orElseThrow(() -> new RuntimeException("Contato não encontrado: " + contactId));
+                            existingAddress.setContact(contact);
+                        } else {
+                            throw new IllegalArgumentException("O campo 'id' está ausente no objeto 'contact'.");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("O valor fornecido para 'contact' não é um mapa válido.");
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Campo inválido: " + key);

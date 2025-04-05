@@ -13,4 +13,5 @@ import br.ifsp.contacts.model.Address;
 public interface AddressRepository extends JpaRepository<Address, Long> {
     // Podemos adicionar métodos personalizados se necessário.
     List<Address> findByCidadeIgnoreCaseContaining(String substring);
+    List<Address> findByContactId(Long contactId);
 }

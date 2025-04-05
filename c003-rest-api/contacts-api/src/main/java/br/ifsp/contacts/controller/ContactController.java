@@ -1,4 +1,4 @@
-package br.ifsp.contacts.control;
+package br.ifsp.contacts.controller;
 
 import br.ifsp.contacts.exception.ResourceNotFoundException;
 import br.ifsp.contacts.model.Contact;
@@ -6,6 +6,7 @@ import br.ifsp.contacts.repository.ContactRepository;
 import br.ifsp.contacts.model.Address;
 import br.ifsp.contacts.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,8 +80,9 @@ public class ContactController {
      * com os dados JSON enviados no corpo da requisição.
      */
     @PostMapping
-    public Contact createContact(@Valid @RequestBody Contact contact) {
-        return contactRepository.save(contact);
+    public ResponseEntity<Contact> createContact(@Valid @RequestBody Contact contact) {
+        Contact savedContact = contactRepository.save(contact);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);
     }
 
     /**
@@ -107,7 +109,8 @@ public class ContactController {
     @PatchMapping("/{id}")
     public ResponseEntity<Contact> patchContact(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         // Find the contact by ID
-        Contact contact = contactRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Contact not found with ID: " + id));
+        Contact contact = contactRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Contact not found with ID: " + id));
 
         // Apply updates to the contact
         updates.forEach((key, value) -> {
@@ -143,7 +146,7 @@ public class ContactController {
     public ResponseEntity<List<Address>> getAddressesByContactId(@PathVariable Long id) {
         // Verifica se o contato existe
         Contact contact = contactRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contato não encontrado: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado: " + id));
 
         // Recupera os endereços associados ao contato
         List<Address> addresses = addressRepository.findAll().stream()
@@ -160,7 +163,8 @@ public class ContactController {
      * Exemplo de acesso: DELETE /api/contacts/1
      */
     @DeleteMapping("/{id}")
-    public void deleteContact(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
         contactRepository.deleteById(id);
+        return ResponseEntity.noContent().build(); // Retorna o código 204 No Content
     }
 }

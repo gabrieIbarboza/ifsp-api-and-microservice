@@ -8,7 +8,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -33,7 +37,9 @@ public class Contact {
     @NotBlank(message = "O campo nome não pode estar vazio.")
     private String nome;
 
-    @Size(min = 8, max = 15, message = "O telefone deve ter entre 8 e 15 caracteres.")
+    @NotBlank(message = "O telefone não pode estar vazio")
+    @Size(min = 8, max = 15, message = "O telefone deve ter entre 8 e 15 caracteres")
+    @Pattern(regexp = "\\d+", message = "O telefone deve conter apenas números")
     private String telefone;
 
     @Email(message = "O campo email deve ter um formato válido.")
@@ -41,6 +47,7 @@ public class Contact {
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @NotEmpty(message = "O contato deve ter pelo menos um endereço")
     private List<Address> addresses;
 
     // Construtor vazio exigido pelo JPA
@@ -84,6 +91,15 @@ public class Contact {
     }
 
     public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
+        if (addresses != null) {
+            addresses.forEach(address -> address.setContact(this)); 
+            
+            if (this.addresses == null) { 
+                this.addresses = new ArrayList<>();
+            }
+            
+            this.addresses.clear(); 
+            this.addresses.addAll(addresses);         
+        }
     }
 }
