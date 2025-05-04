@@ -1,8 +1,8 @@
 package br.ifsp.tasks.dto.task;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import br.ifsp.tasks.enums.Prioridade;
+import br.ifsp.tasks.model.Prioridade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +15,8 @@ public class TaskResponseDTO {
     private String titulo;
     private String descricao;
     private Prioridade prioridade;
-    private LocalDate dataLimite;
+    private LocalDateTime dataLimite;
     private boolean concluida;
     private String categoria;
-    private LocalDate criadaEm;
+    private LocalDateTime criadaEm;
 }

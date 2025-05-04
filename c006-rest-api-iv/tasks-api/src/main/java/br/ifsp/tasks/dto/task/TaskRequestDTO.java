@@ -1,6 +1,7 @@
 package br.ifsp.tasks.dto.task;
 
-import br.ifsp.tasks.enums.Prioridade;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import br.ifsp.tasks.model.Prioridade;
 
 @Data
 @NoArgsConstructor
@@ -24,11 +27,12 @@ public class TaskRequestDTO {
     private String descricao;
 
     @NotNull(message = "A prioridade não pode estar vazia")
+    @Enumerated(EnumType.STRING)
     private Prioridade prioridade;
 
     @NotNull(message = "A data limite não pode estar vazia")
     @FutureOrPresent(message = "A data limite deve ser no presente ou no futuro")
-    private LocalDate dataLimite;
+    private LocalDateTime dataLimite;
 
     private Boolean concluida;
 

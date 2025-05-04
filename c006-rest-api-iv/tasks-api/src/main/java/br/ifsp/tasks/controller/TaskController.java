@@ -1,6 +1,5 @@
 package br.ifsp.tasks.controller;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ifsp.tasks.dto.page.PagedResponse;
 import br.ifsp.tasks.dto.task.TaskPatchDTO;
 import br.ifsp.tasks.dto.task.TaskRequestDTO;
 import br.ifsp.tasks.dto.task.TaskResponseDTO;
@@ -56,9 +56,8 @@ public class TaskController {
         @ApiResponse(responseCode = "403", description = "Acesso negado", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<Page<TaskResponseDTO>> getAllTasks(Pageable pageable) {
-        Page<TaskResponseDTO> responseDTO = taskService.getAllTasks(pageable);
-        return ResponseEntity.ok(responseDTO);
+    public ResponseEntity<PagedResponse<TaskResponseDTO>> getAllTasks(Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllTasks(pageable));
     }
 
     @Operation(summary = "Buscar tarefa por ID", description = "Busca uma tarefa pelo ID fornecido")
@@ -69,8 +68,7 @@ public class TaskController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable Long id) {
-        TaskResponseDTO responseDTO = taskService.getTaskById(id);
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(taskService.getTaskById(id));
     }
 
     @Operation(summary = "Buscar tarefas por categoria", description = "Retorna uma lista paginada de tarefas cujo campo de categoria contém o termo pesquisado")
@@ -79,9 +77,8 @@ public class TaskController {
                     @ApiResponse(responseCode = "403", description = "Acesso negado", content = @Content)
     })
     @GetMapping("/search")
-    public ResponseEntity<Page<TaskResponseDTO>> getTasksByCategory(@RequestParam String categoria, Pageable pageable) {
-        Page<TaskResponseDTO> responseDTO = taskService.getTasksByCategory(categoria, pageable);
-        return ResponseEntity.ok(responseDTO);
+    public ResponseEntity<PagedResponse<TaskResponseDTO>> getTasksByCategory(@RequestParam String category, Pageable pageable) {
+        return ResponseEntity.ok(taskService.getTasksByCategory(category, pageable));
     }
 
     @Operation(summary = "Concluir tarefa", description = "Marca uma tarefa como concluída")
