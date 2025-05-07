@@ -3,7 +3,7 @@ package br.ifsp.tasks.dto.task;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import br.ifsp.tasks.model.Prioridade;
+import br.ifsp.tasks.model.enums.Prioridade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

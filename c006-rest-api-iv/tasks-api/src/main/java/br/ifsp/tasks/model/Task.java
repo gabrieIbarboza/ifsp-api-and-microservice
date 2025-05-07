@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import br.ifsp.tasks.model.enums.Prioridade;
+
 @NoArgsConstructor
 @Data
 @Entity

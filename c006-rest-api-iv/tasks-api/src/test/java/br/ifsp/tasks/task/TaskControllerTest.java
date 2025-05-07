@@ -16,8 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.ifsp.tasks.dto.task.TaskRequestDTO;
-import br.ifsp.tasks.model.Prioridade;
 import br.ifsp.tasks.model.Task;
+import br.ifsp.tasks.model.enums.Prioridade;
 import br.ifsp.tasks.repository.TaskRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

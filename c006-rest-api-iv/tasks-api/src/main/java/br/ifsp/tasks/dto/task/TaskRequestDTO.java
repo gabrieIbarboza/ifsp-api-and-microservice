@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-import br.ifsp.tasks.model.Prioridade;
+import br.ifsp.tasks.model.enums.Prioridade;
 
 @Data
 @NoArgsConstructor

@@ -21,8 +21,8 @@ import br.ifsp.tasks.dto.task.TaskResponseDTO;
 import br.ifsp.tasks.exception.InvalidTaskStateException;
 import br.ifsp.tasks.exception.ResourceNotFoundException;
 import br.ifsp.tasks.mapper.PagedResponseMapper;
-import br.ifsp.tasks.model.Prioridade;
 import br.ifsp.tasks.model.Task;
+import br.ifsp.tasks.model.enums.Prioridade;
 import br.ifsp.tasks.repository.TaskRepository;
 import br.ifsp.tasks.service.TaskService;
 

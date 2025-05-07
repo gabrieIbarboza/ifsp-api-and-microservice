@@ -1,4 +1,4 @@
-package br.ifsp.tasks.model;
+package br.ifsp.tasks.model.enums;
 
 import java.util.Arrays;
 
